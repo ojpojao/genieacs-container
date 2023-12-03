@@ -1,0 +1,60 @@
+FROM node:lts-alpine3.18 as builder
+
+ARG GENIEACS_REPO="https://github.com/genieacs/genieacs.git"
+
+WORKDIR /build
+RUN apk add --no-cache git \
+    && git clone ${GENIEACS_REPO} . \
+    && npm install -g ts \
+    && npm install -g typescript \
+    && npm install -g gulp \
+    && npm install -g ts-node
+RUN npm install && npm run build
+
+FROM node:lts-alpine3.18 as final
+
+LABEL genieacs.site="https://genieacs.com/"
+LABEL genieacs.docs="http://docs.genieacs.com/en/latest/"
+LABEL genieacs.repo="https://github.com/genieacs/genieacs"
+LABEL genieacs.description="GenieACS is an open source TR-069 remote management solution with advanced device provisioning capabilities."
+LABEL genieacs.module="NBI"
+LABEL genieacs.version="1.2.9"
+LABEL image.author.name="João Paulo Júnior"
+LABEL image.author.email="ojpojao@gmail.com"
+
+WORKDIR /genieacs
+
+COPY --from=builder /build/dist/bin/genieacs-nbi /genieacs/bin/genieacs-nbi
+COPY --from=builder  /build/package* /genieacs/
+
+RUN npm install --omit=dev
+
+RUN addgroup genieacs \
+    && adduser -S -G genieacs genieacs \
+    && mkdir -p /genieacs/logs \ 
+    && mkdir -p /genieacs/ext \
+    && ln -s /genieacs/dist/bin/genieacs-nbi /usr/bin/genieacs-nbi \
+    && chown -R genieacs:genieacs /genieacs \
+    && passwd -l root
+
+# ENV MONGODB_USER=genieacs
+# ENV MONGODB_PASSWORD=genieacs
+
+ENV GENIEACS_NBI_ACCESS_LOG_FILE=/genieacs/logs/genieacs-nbi-access.log
+#ENV GENIEACS_NBI_LOG_FILE=/genieacs/logs/genieacs-nbi.log
+ENV GENIEACS_NBI_INTERFACE=::
+ENV GENIEACS_WORKER_PROCCESSES=0
+ENV GENIEACS_DEBUG_FILE=/genieacs/logs/genieacs-nbi-debug.yaml
+ENV GENIEACS_EXT_DIR=/genieacs/ext
+ENV GENIEACS_EXT_TIMEOUT=15000
+ENV GENIEACS_MAX_COMMIT_ITERATIONS=10000
+ENV GENIEACS_MAX_CONCURRENT_REQUESTS=20000
+# ENV GENIEACS_CWMP_ALIVE_TIMEOUT=1200 # ?
+ENV NODE_OPTIONS="--enable-source-maps UV_THREADPOOL_SIZE=12 max_old_space_size=4096"
+ENV GENIEACS_MONGODB_CONNECTION_URL="mongodb://127.0.0.1/genieacs"
+
+USER genieacs
+EXPOSE 7557
+# VOLUME ["/genieacs/logs", "/genieacs/ext"]
+
+CMD ["genieacs-nbi"]
