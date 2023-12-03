@@ -12,8 +12,8 @@ GenieACS Docs [http://docs.genieacs.com/en/latest/](http://docs.genieacs.com/en/
 ### Build and Run
 Clone this repo:
 ```
-git clone github.com/ojpojao/mygenieacs
-cd mygenieacs
+git clone github.com/ojpojao/genieacs-container
+cd genieacs-container
 ```
 
 #### Build
