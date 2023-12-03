@@ -39,5 +39,12 @@ To remove GenieACS images, run the command:
 ```
 This command only remove the final images. Intermediate images will not be removed 😅😅😅
 
+### References
+
+GenieACS docs [https://www.linkedin.com/in/ewertonmarschalk/](https://www.linkedin.com/in/ewertonmarschalk/)
+
+
+Automatizando a implantação de um servidor GenieACS (TR-069) no Kubernetes usando Github Actions (CICD) by [ewertonmarschalk](https://www.linkedin.com/in/ewertonmarschalk/) - [https://www.linkedin.com/pulse/automatizando-implanta%C3%A7%C3%A3o-de-um-servidor-genieacs-tr-069-marschalk/](https://www.linkedin.com/pulse/automatizando-implanta%C3%A7%C3%A3o-de-um-servidor-genieacs-tr-069-marschalk/)
+
 
 by: [@ojpojao](https://github.com/ojpojao)
