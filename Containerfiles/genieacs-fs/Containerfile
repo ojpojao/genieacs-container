@@ -33,7 +33,7 @@ RUN addgroup genieacs \
     && adduser -S -G genieacs genieacs \
     && mkdir -p /genieacs/logs \ 
     && mkdir -p /genieacs/ext \
-    && ln -s /genieacs/dist/bin/genieacs-fs /usr/bin/genieacs-fs \
+    && ln -s /genieacs/bin/genieacs-fs /usr/bin/genieacs-fs \
     && chown -R genieacs:genieacs /genieacs \
     && passwd -l root
 
