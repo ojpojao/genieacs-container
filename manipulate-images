@@ -1,0 +1,75 @@
+#! /usr/bin/env bash
+
+# build, remove and (re|tag) images.
+# author: João Paulo Júnior
+# email: ojpojao@gmail.com
+# github: github.com/ojpojao
+
+USERNAME="ojpojao"
+GITHASH=$(git log --format="%h" -n1)
+ENGINE=""
+
+function has_container_engine() {
+    for engine in docker podman
+    do
+        if [[ ! $(command -v ${engine}) ]]; then
+            echo "${engine} não está instalado"
+        else
+            echo "${engine} instalado"
+            ENGINE=${engine}
+        fi
+    done
+    if [[ -z ${ENGINE} ]]; then
+        echo "Não há nenhuma container engine no seu sistema!"
+        exit 1
+    fi
+}
+
+function build(){
+    for module in cwmp fs nbi ui
+    do
+        #${ENGINE} build -f ./Containerfiles/genieacs-${module}/Containerfile -t ${USERNAME}/genieacs-${module}:${GITHASH} .
+        ${ENGINE} build -f ./Containerfiles/genieacs-${module}/Containerfile -t ${USERNAME}/genieacs-${module}:latest .
+    done
+}
+
+function remove(){
+    for module in cwmp fs nbi ui
+    do
+        #${ENGINE} image rm -f ${USERNAME}/genieacs-${module}:${GITHASH}
+        ${ENGINE} image rm -f ${USERNAME}/genieacs-${module}:latest
+    done
+}
+
+#function release(){
+#    for module in cwmp fs nbi ui
+#    do
+#        ${ENGINE} tag ${USERNAME}/genieacs-${module}:${GITHASH} ${USERNAME}/genieacs-${module}:latest
+#    done
+#}
+
+function help(){
+    echo "
+    options:
+        build -> to create container image
+        remove -> to delete all container images
+        help -> this message
+    "
+    #echo"
+    #options:
+    #    build -> to create container image
+    #    remove -> to delete all container images
+    #    release -> tag container image to latest release
+    #    help -> this message
+    #"
+}
+
+function execute(){
+    #if [ $1 = "build" ] || [ $1 = "remove" ] || [ $1 = "release" ]; then
+    if [ $1 = "build" ] || [ $1 = "remove" ]; then
+        has_container_engine
+    fi
+    $1
+}
+
+execute $1
