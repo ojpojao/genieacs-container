@@ -1,0 +1,119 @@
+# version: "3"
+services:
+  mongo:
+    image: mongo:4.4
+    restart: always
+    container_name: genieacs-mongo
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=genieacs
+      - MONGO_INITDB_ROOT_PASSWORD=genieacs
+      - MONGO_DATA_DIR=/data/db
+      - MONGO_LOG_DIR=/var/log/mongodb
+    volumes:
+      - genieacs-mongodb:/data/db
+      - genieacs-mongodb-data-configdb:/data/configdb
+      - /etc/localtime:/etc/localtime:ro
+    ports:
+      - "27017:27017"
+    networks:
+      # - frontend
+      - backend
+
+  cwmp:
+    depends_on:
+      - 'mongo'
+    image: ojpojao/genieacs-cwmp
+    restart: always
+    container_name: genieacs-cwmp
+    environment:
+      - GENIEACS_MONGODB_CONNECTION_URL=mongodb://genieacs:genieacs@mongo:27017/
+      - GENIEACS_CWMP_ACCESS_LOG_FILE=./logs/genieacs-cwmp-access.log
+      - GENIEACS_EXT_DIR=./genieacs/ext
+      # - GENIEACS_DEBUG_FILE=./logs/genieacs-debug.yaml
+      # - NODE_OPTIONS="--enable-source-maps UV_THREADPOOL_SIZE=12 max_old_space_size=4096"
+      # - GENIEACS_EXT_TIMEOUT=1000000
+      # - GENIEACS_MAX_COMMIT_ITERATIONS=30000
+      # - GENIEACS_CWMP_ALIVE_TIMEOUT=120000
+      # - GENIEACS_CWMP_INTERFACE="::"
+      # - GENIEACS_MAX_CONCURRENT_REQUESTS=20000
+    volumes:
+      - genieacs-cwmp:/genieacs
+      - /etc/localtime:/etc/localtime:ro
+    ports:
+      - "7547:7547"
+    networks:
+      - frontend
+      - backend
+    cap_add:
+      - NET_RAW
+  
+  nbi:
+    depends_on:
+      - 'mongo'
+    image: ojpojao/genieacs-nbi
+    restart: always
+    container_name: genieacs-nbi
+    environment:
+      - GENIEACS_MONGODB_CONNECTION_URL=mongodb://genieacs:genieacs@mongo:27017/
+    volumes:
+      - genieacs-nbi:/genieacs
+      - /etc/localtime:/etc/localtime:ro
+    ports:
+      - '7557:7557'
+    networks:
+      - frontend
+      - backend
+    cap_add:
+      - NET_RAW
+
+  fs:
+    depends_on:
+      - 'mongo'
+    image: ojpojao/genieacs-fs
+    restart: always
+    container_name: genieacs-fs
+    environment:
+      - GENIEACS_MONGODB_CONNECTION_URL=mongodb://genieacs:genieacs@mongo:27017/
+    volumes:
+      - genieacs-fs:/genieacs
+      - /etc/localtime:/etc/localtime:ro
+    ports:
+      - '7567:7567'
+    networks:
+      - frontend
+      - backend
+    cap_add:
+      - NET_RAW
+
+  ui:
+    depends_on:
+      - 'mongo'
+    image: ojpojao/genieacs-ui
+    restart: always
+    container_name: genieacs-ui
+    environment: 
+      - GENIEACS_MONGODB_CONNECTION_URL=mongodb://genieacs:genieacs@mongo:27017/
+      - GENIEACS_UI_JWT_SECRET=changeme
+    volumes:
+      - genieacs-ui:/genieacs
+      - /etc/localtime:/etc/localtime:ro
+    ports:
+      - '3000:3000'
+    networks:
+      - backend
+      - frontend
+    cap_add:
+      - NET_RAW
+
+    
+volumes:
+  genieacs-mongodb:
+  genieacs-mongodb-data-configdb:
+  genieacs-cwmp:
+  genieacs-nbi:
+  genieacs-fs:
+  genieacs-ui:
+
+networks:
+  backend: {}
+  frontend: {}
