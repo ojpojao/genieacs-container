@@ -1,4 +1,4 @@
-PHONY: all genieacs-cwmp genieacs-fs genieacs-nbi genieacs-ui
+PHONY: all genieacs-cwmp genieacs-fs genieacs-nbi genieacs-ui clean
 
 all: genieacs-cwmp genieacs-fs genieacs-nbi genieacs-ui
 
@@ -14,11 +14,15 @@ genieacs-nbi:
 genieacs-ui:
 	podman build -t genieacs-ui -f ./Containerfiles/genieacs-ui/Containerfile
 
+clean:
+	podman rmi -f genieacs-cwmp genieacs-fs genieacs-nbi genieacs-ui
+
 help:
 	@echo "Uso:"
-	@echo "  make all           Constrói todos os containers"
-	@echo "  make genieacs-cwmp Constrói o container genieacs-cwmp"
-	@echo "  make genieacs-fs   Constrói o container genieacs-fs"
-	@echo "  make genieacs-nbi  Constrói o container genieacs-nbi"
-	@echo "  make genieacs-ui   Constrói o container genieacs-ui"
+	@echo "  make all           Cria todas as imagens"
+	@echo "  make genieacs-cwmp Cria a imagem genieacs-cwmp"
+	@echo "  make genieacs-fs   Cria a imagem genieacs-fs"
+	@echo "  make genieacs-nbi  Cria a imagem genieacs-nbi"
+	@echo "  make genieacs-ui   Cria a imagem genieacs-ui"
+	@echo "  make clean         Remove todas as imagens criadas"
 	@echo "  make help          Exibe esta mensagem de ajuda"
