@@ -1,7 +1,7 @@
 # version: "3"
 services:
   mongo:
-    image: mongo:4.4
+    image: mongo
     restart: always
     container_name: genieacs-mongo
     environment:
@@ -104,6 +104,21 @@ services:
       - frontend
     cap_add:
       - NET_RAW
+  
+  cliente-1:
+    depends_on:
+      - 'genieacs-cwmp'
+    image: localhost/genieacs/simu:latest
+    networks:
+      - frontend
+      - backend
+    volumes:
+     - /home/ojpojao/projects/genieacs-container/genieacs-sim-docker/device-788CB5-Device2-22333A0000563-2024-04-06T200715093Z.csv:/opt/genieacs-sim/device-788CB5-Device2-22333A0000563-2024-04-06T200715093Z.csv:Z,U
+    ports:
+      - 8000:7547
+    # ./genieacs-sim -u http://genieacs-cwmp:7547 -m ./device-788CB5-Device2-22333A0000563-2024-04-06T200715093Z.csv
+    # entrypoint:
+    #   - "./opt/genieacs-sim/genieacs-sim -u http://genieacs-cwmp:7547 -m ./device-788CB5-Device2-22333A0000563-2024-04-06T200715093Z.csv"
 
     
 volumes:
