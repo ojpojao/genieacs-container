@@ -19,7 +19,7 @@ cd genieacs-container
 #### Build
 To create GenieACS images, run the command bellow:
 ```
-./manipulate-images build
+make all
 ```
 
 #### Run
@@ -29,15 +29,14 @@ podman-compose up -d
 ```
 or 
 ```
-docker-compose up d
+docker-compose up -d
 ```
 
 ### Remove
 To remove GenieACS images, run the command:
 ```
-./manipulate-images remove
+make clean
 ```
-This command only remove the final images. Intermediate images will not be removed 😅😅😅
 
 ### References
 
