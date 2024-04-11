@@ -22,7 +22,7 @@ services:
   cwmp:
     depends_on:
       - 'mongo'
-    image: ojpojao/genieacs-cwmp
+    image: localhost/genieacs-cwmp
     restart: always
     container_name: genieacs-cwmp
     environment:
@@ -46,11 +46,11 @@ services:
       - backend
     cap_add:
       - NET_RAW
-  
+
   nbi:
     depends_on:
       - 'mongo'
-    image: ojpojao/genieacs-nbi
+    image: localhost/genieacs-nbi
     restart: always
     container_name: genieacs-nbi
     environment:
@@ -69,7 +69,7 @@ services:
   fs:
     depends_on:
       - 'mongo'
-    image: ojpojao/genieacs-fs
+    image: localhost/genieacs-fs
     restart: always
     container_name: genieacs-fs
     environment:
@@ -88,10 +88,10 @@ services:
   ui:
     depends_on:
       - 'mongo'
-    image: ojpojao/genieacs-ui
+    image: localhost/genieacs-ui
     restart: always
     container_name: genieacs-ui
-    environment: 
+    environment:
       - GENIEACS_MONGODB_CONNECTION_URL=mongodb://genieacs:genieacs@mongo:27017/
       - GENIEACS_UI_JWT_SECRET=changeme
     volumes:
@@ -104,7 +104,7 @@ services:
       - frontend
     cap_add:
       - NET_RAW
-  
+
   cliente-1:
     depends_on:
       - 'genieacs-cwmp'
@@ -120,7 +120,7 @@ services:
     # entrypoint:
     #   - "./opt/genieacs-sim/genieacs-sim -u http://genieacs-cwmp:7547 -m ./device-788CB5-Device2-22333A0000563-2024-04-06T200715093Z.csv"
 
-    
+
 volumes:
   genieacs-mongodb:
   genieacs-mongodb-data-configdb:
